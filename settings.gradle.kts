@@ -1,0 +1,1 @@
+rootProject.name = "SatelliteGrouping_Sem2"

@@ -1,6 +1,6 @@
 package org.example.repository;
 
-import org.example.SatelliteConstellation;
+import org.example.domains.SatelliteConstellation;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

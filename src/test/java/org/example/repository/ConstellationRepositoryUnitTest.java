@@ -1,6 +1,6 @@
 package org.example.repository;
 
-import org.example.SatelliteConstellation;
+import org.example.domains.SatelliteConstellation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

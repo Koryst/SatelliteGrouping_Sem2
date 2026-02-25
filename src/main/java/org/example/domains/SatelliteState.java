@@ -1,4 +1,4 @@
-package org.example;
+package org.example.domains;
 
 public class SatelliteState {
     private boolean isActive = false;

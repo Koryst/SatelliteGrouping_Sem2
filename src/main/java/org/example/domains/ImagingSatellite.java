@@ -1,4 +1,4 @@
-package org.example;
+package org.example.domains;
 
 public class ImagingSatellite extends Satellite {
     private final double resolution;

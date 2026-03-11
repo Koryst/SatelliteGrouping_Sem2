@@ -1,9 +1,9 @@
 package org.example.repository;
 
-import org.example.domains.ImagingSatellite;
-import org.example.domains.ImagingSatelliteParam;
-import org.example.domains.Satellite;
-import org.example.domains.SatelliteParam;
+import org.example.domains.satellites.ImagingSatellite;
+import org.example.domains.satellites.ImagingSatelliteParam;
+import org.example.domains.satellites.Satellite;
+import org.example.domains.satellites.SatelliteParam;
 import org.example.services.SatelliteServiceInt;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

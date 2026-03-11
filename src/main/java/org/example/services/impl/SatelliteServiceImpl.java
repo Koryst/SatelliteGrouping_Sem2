@@ -1,8 +1,8 @@
 package org.example.services.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.domains.Satellite;
-import org.example.domains.SatelliteParam;
+import org.example.domains.satellites.Satellite;
+import org.example.domains.satellites.SatelliteParam;
 import org.example.factory.SatelliteFactory;
 import org.example.services.SatelliteServiceInt;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package org.example.domains;
+package org.example.domains.satellites;
 
 import org.example.constants.EnergySystemConstants;
 

@@ -1,53 +1,64 @@
 package org.example.services;
 
-import org.example.domains.Satellite;
-import org.example.domains.SatelliteConstellation;
-import org.example.repository.ConstellationRepository;
+import lombok.RequiredArgsConstructor;
+import org.example.aop.LogExecutionTime;
+import org.example.domains.requests.AddSatelliteRequest;
+import org.example.domains.requests.MissionRequest;
+import org.example.domains.satellites.Satellite;
+import org.example.domains.satellites.SatelliteParam;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class SpaceOperationCenterService {
-    private final ConstellationRepository repository;
+    private final ConstellationService constellationService;
+    private final SatelliteServiceInt satelliteService;
 
-    public SpaceOperationCenterService(ConstellationRepository repository) {
-        this.repository = repository;
-    }
+    @LogExecutionTime
+    public void addSetellite(AddSatelliteRequest request) {
+        try {
+            constellationService.showConstellationStatus(request.constellationName());
+        } catch (Exception e) {
+            constellationService.createAndSaveConstellation(request.constellationName());
+        }
 
-    public void createAndSaveConstellation(String name) {
-        SatelliteConstellation constellation = new SatelliteConstellation(name);
-        repository.addConstellation(constellation);
-    }
-
-    public void addSatelliteToConstellation(String constellationName, Satellite satellite) {
-        SatelliteConstellation constellation = repository.getConstellation(constellationName);
-        constellation.addSatellite(satellite);
-        System.out.println("Добавлен спутник " + satellite.getName() +
-                " в группировку " + constellationName);
-    }
-
-    public void executeConstellationMission(String constellationName) {
-        SatelliteConstellation constellation = repository.getConstellation(constellationName);
-        System.out.println("\n=== ВЫПОЛНЕНИЕ МИССИЙ ДЛЯ ГРУППИРОВКИ: " + constellationName + " ===");
-        constellation.executeAllMissions();
-    }
-
-    public void activateAllSatellites(String constellationName) {
-        SatelliteConstellation constellation = repository.getConstellation(constellationName);
-        System.out.println("\n=== АКТИВАЦИЯ СПУТНИКОВ В ГРУППИРОВКЕ: " + constellationName + " ===");
-
-        for (Satellite satellite : constellation.getSatellites()) {
-            satellite.activate();
+        for (SatelliteParam param : request.satelliteParams()) {
+            Satellite satellite = satelliteService.createSatellite(param);
+            constellationService.addSatelliteToConstellation(request.constellationName(), satellite);
         }
     }
 
-    public void showConstellationStatus(String constellationName) {
-        SatelliteConstellation constellation = repository.getConstellation(constellationName);
-        System.out.println("\n=== СТАТУС ГРУППИРОВКИ: " + constellationName + " ===");
-
-        System.out.println("Количество спутников: " + constellation.getSatellites().size());
-
-        for (Satellite satellite : constellation.getSatellites()) {
-            System.out.println(satellite.getState());
+     public void executeMission(MissionRequest request) {
+        switch (request.targetType()) {
+            case CONSTELLATION -> {
+                constellationService.activateAllSatellites(request.constellationName());
+                constellationService.executeConstellationMission(request.constellationName());
+            }
+            case SINGLE_SATELLITE -> {
+                var constellation = constellationService.getConstellation(request.constellationName());
+                var satellite = constellation.getSatellites().stream()
+                        .filter(s ->s.getName().equals(request.satelliteName()))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Спутник не найден: " + request.satelliteName()));
+                satellite.activate();
+                satellite.performMission();
+            }
         }
-    }
+     }
+
+     public String getSystemOverview() {
+        var allConstellation = constellationService.getConstellations();
+        StringBuilder sb = new StringBuilder("== СИСТЕМНАЯ СВОДКА ===\n");
+        sb.append("Всего группировок: ").append(allConstellation.size()).append("\n");
+        allConstellation.values().forEach(cons -> {
+            sb.append(" Группировка '").append(cons.getConstellationName())
+                    .append("': спутников ").append(cons.getSatellites().size()).append("\n");
+            cons.getSatellites().forEach(sat -> {
+                sb.append("    - ").append(sat.getName())
+                        .append(" [").append(sat.getState().isActive() ? "Активен" : "Неактивен")
+                        .append("], заряд: ").append((int)(sat.getEnergy().getBatteryLevel()*100)).append("%\n");
+            });
+        });
+        return sb.toString();
+     }
 }

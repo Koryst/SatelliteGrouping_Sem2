@@ -1,6 +1,6 @@
 package org.example.factory.impl;
 
-import org.example.domains.*;
+import org.example.domains.satellites.*;
 import org.example.factory.SatelliteFactory;
 import org.springframework.stereotype.Component;
 

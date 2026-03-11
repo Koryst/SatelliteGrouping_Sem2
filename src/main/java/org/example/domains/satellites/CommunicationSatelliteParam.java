@@ -1,4 +1,4 @@
-package org.example.domains;
+package org.example.domains.satellites;
 
 import lombok.Getter;
 
@@ -7,7 +7,7 @@ public class CommunicationSatelliteParam extends SatelliteParam {
     private double bandwidth;
 
     public CommunicationSatelliteParam(String name, double batteryLevel, double bandwidth) {
-        super(SatelliteType.COMMUNICATION, name, bandwidth);
+        super(SatelliteType.COMMUNICATION, name, batteryLevel);
         this.bandwidth = bandwidth;
     }
 }
